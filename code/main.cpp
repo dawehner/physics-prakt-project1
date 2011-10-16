@@ -47,9 +47,6 @@ int main(int argc, char **argv) {
   // Stores a pointer to the current used integration method
   void (*integration_function) (listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) = integration_euler;
 
-  // Setup the initial values
-  nbody_init_problem();
-
   // Load the options to the function.
 // Describe the available programm options.
   po::options_description desc("Allowed options", 1024);
@@ -104,6 +101,9 @@ int main(int argc, char **argv) {
   // Load the initial parameters
   nbody_load_from_file(input_filename, y, dydx, m, eta, t_max);
   dt = eta;
+
+  // Setup the initial values
+  nbody_init_problem(y, m);
 
   // Store initial conserved quantities
 
@@ -202,7 +202,65 @@ void nbody_load_from_file(string& filename, listdouble& y, listdouble& dydx, lis
 
 // void nbody_adapt_timestamp(double& dt, const double& eta) { }
 
-void nbody_init_problem() {}
+void nbody_init_problem(listdouble& y, listdouble& m) {
+  // Normalize the masses.
+  double total_mass = 0.0;
+
+  int size = m.size();
+  for (int i = 0; i < size; i++) {
+    total_mass += m[i];
+  }
+  for (int i = 0; i < size; i++) {
+    m[i] = m[i] / total_mass;
+  }
+  total_mass = 1;
+
+  // Find the center of mass.
+  // \vec{r}_cm = \frac{1}{M} \cdot \sum_i^N m_i \cdot \vec{r}_i
+  listdouble r_cm(3);
+
+  // Iterate over x,y,z
+  for (int i = 0; i < 3; i++) {
+    // then over each body.
+    for (int j = 0; j < size; j++) {
+      // And sum up the values of a certain component of each body.
+      r_cm[i] = r_cm[i] + m[j] * y[j * 3 + i];
+    }
+    r_cm[i] = r_cm[i] / total_mass;
+  }
+
+  // Now we have the center of mass.
+
+  // Let's move all components according to the center of mass.
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < size; j++) {
+      y[j*3 + i] = y[j*3 + i] - r_cm[i];
+    }
+  }
+
+  // Now do the same for the velocities as well.
+  listdouble v_cm(3);
+  int vel_offset = 3 * size;
+
+  // Iterate over x,y,z
+  for (int i = 0; i < 3; i++) {
+    // then over each body.
+    for (int j = 0; j < size; j++) {
+      // And sum up the values of a certain component of each body.
+      v_cm[i] = v_cm[i] + m[j] * y[vel_offset + j * 3 + i];
+    }
+    v_cm[i] = v_cm[i] / total_mass;
+  }
+
+  // Now we have the center of mass.
+
+  // Let's move all components according to the center of mass.
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < size; j++) {
+      y[vel_offset + j*3 + i] = y[vel_offset + j*3 + i] - v_cm[i];
+    }
+  }
+}
 
 void nbody_adapt_timestamp(double& dt, const double& eta) { }
 

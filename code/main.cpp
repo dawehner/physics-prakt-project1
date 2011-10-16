@@ -197,6 +197,8 @@ void nbody_load_from_file(string& filename, listdouble& y, listdouble& dydx, lis
     }
     line_count++;
   }
+
+//   cout << "Loaded initial data:" << "N: " << count_bodies << " eta: " << eta << " t_max: " << t_max << endl;
 }
 
 

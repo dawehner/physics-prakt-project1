@@ -16,8 +16,8 @@ void integration_verlet(listdouble& y, const listdouble& dydx, const listdouble&
 void integration_leapfrog(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt);
 void integration_rk4(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt);
 
-void calc_dydx(listdouble& dydx, const listdouble& y, const listdouble& m);
 void calc_accel_multiple(listdouble& a, const listdouble& y, const listdouble& m);
 void calc_accel_change_multiple(listdouble& da, const listdouble& y, const listdouble& m);
+void calc_dydx(listdouble& dydx, const listdouble& y, const listdouble& m);
 
 #endif

@@ -15,3 +15,8 @@ listdouble v3_cross(const listdouble& v1, const listdouble& v2) {
 
   return v3;
 }
+
+double v3_scalar(const listdouble& v1, const listdouble& v2) {
+  return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+}
+

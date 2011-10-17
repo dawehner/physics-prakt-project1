@@ -14,5 +14,9 @@ double v3_norm(const listdouble& v3);
  */
 listdouble v3_cross(const listdouble& v1, const listdouble& v2);
 
+/**
+ * Calculate the scalar product of two 3d vectors.
+ */
+double v3_scalar(const listdouble& v1, const listdouble& v2);
 
 #endif

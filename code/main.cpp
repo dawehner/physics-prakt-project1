@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "integration.h"
+#include "dydx.h"
 
 #include <string>
 #include <vector>

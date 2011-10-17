@@ -264,7 +264,9 @@ void nbody_init_problem(listdouble& y, listdouble& m) {
   }
 }
 
-void nbody_adapt_timestamp(double& dt, const double& eta) { }
+void nbody_adapt_timestamp(double& dt, const double& eta) {
+//   calc_accel_change_multiple();
+}
 
 void nbody_write_pos(ofstream &pos_file, listdouble& y, listdouble& dydx, listdouble& m) {
   if (pos_file.is_open()) {

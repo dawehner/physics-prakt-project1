@@ -29,4 +29,9 @@ void nbody_init_problem(listdouble& y, listdouble& m);
  */
 void nbody_write_pos(ofstream &file_pos, listdouble& y, listdouble& dydx, listdouble& m);
 
+/**
+ * Add the current conserved quantities to the conserved file.
+ */
+void nbody_write_conservered(ofstream& conserved_pos, const double t, const double energy, const double total_momentum, const double total_angular_momentum, const listdouble& r_cm);
+
 #endif

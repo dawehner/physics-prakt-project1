@@ -19,4 +19,6 @@ listdouble v3_cross(const listdouble& v1, const listdouble& v2);
  */
 double v3_scalar(const listdouble& v1, const listdouble& v2);
 
+listdouble v3_slice(const listdouble& vx, const int start);
+
 #endif

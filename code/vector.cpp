@@ -6,6 +6,15 @@ double v3_norm(const listdouble& v3) {
   return norm;
 }
 
+listdouble v3_slice(const listdouble& vx, const int start) {
+  listdouble v3(3);
+  for (int i = 0; i < 3; i++) {
+    v3[i] = vx[start + i];
+  }
+
+  return v3;
+}
+
 listdouble v3_cross(const listdouble& v1, const listdouble& v2) {
   listdouble v3(3);
 

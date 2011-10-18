@@ -15,7 +15,7 @@ from math import *
 #    - TODO: 3: variable to move the body to another place, for example \pi
 def nbody_generate_init_file_ea(filename, values, t_max = 2, eta = 0.1):
   output = ""
-  m1 = 0.0
+  m1 = 1.0
   counter = 0
   count_bodies = len(values)
 

@@ -1,4 +1,6 @@
-#include "math.h"
+#include "main.h"
+#include "vector.h"
+#include <cmath>
 
 void calc_accel_multiple(listdouble& a, const listdouble& y, const listdouble& m) {
   const int count_bodies = m.size();
@@ -69,19 +71,40 @@ void calc_accel_change_multiple(listdouble& da, const listdouble& y, const listd
 }
 
 void calc_dydx(listdouble& dydx, const listdouble& y, const listdouble& m) {
-  const int size = m.size() * 3;
+  const int size = y.size();
+  const int size_2 = size / 2;
 
   // Calc speed.
-  for (int i = 0; i < size; i++) {
-    dydx[i] = y[size + i];
+  for (int i = 0; i < size_2; i++) {
+    dydx[i] = y[size_2 + i];
   }
 
   // Calc accelleration.
-  listdouble a(size);
+  listdouble a(size_2);
   calc_accel_multiple(a, y, m);
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < size_2; i++) {
     // start on the v's.
-    dydx[size + i] = a[i];
+    dydx[size_2 + i] = a[i];
   }
+}
+
+void calc_dydx2(listdouble& dydx2, const listdouble& y, const listdouble& m) {
+  const int size = y.size();
+  const int size_2 = size/2;
+
+  listdouble a(size);
+  listdouble da(size);
+
+  calc_accel_multiple(a, y, m);
+  calc_accel_change_multiple(da, y, m);
+
+  for (int i = 0; i < size_2; i++) {
+    dydx2[i] = a[i];
+  }
+  for (int i = size_2; i < size; i++) {
+    dydx2[i] = da[i - size];
+  }
+
+  
 }
 

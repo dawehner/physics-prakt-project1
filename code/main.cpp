@@ -4,6 +4,7 @@
 #include "main.h"
 #include "integration.h"
 #include "dydx.h"
+#include "quantities.h"
 
 #include <string>
 #include <vector>
@@ -31,6 +32,8 @@ int main(int argc, char **argv) {
   int steps_per_orbit = 100;
   bool break_closed_encounter = false;
   string input_filename = "";
+  bool calc_excentric_axis = true;
+  bool calc_energies = true;
 
 
   // Stores variables for the time.
@@ -62,6 +65,8 @@ int main(int argc, char **argv) {
     ("steps-per-orbit,s", po::value<int>(&steps_per_orbit)->default_value(100), "The initial amount of steps per orbit")
     ("input,f", po::value<string>(&input_filename)->default_value(""), "Specify the file which has the initial parameters")
     ("break-closed-encounters,e", po::value<bool>(&break_closed_encounter)->default_value(false), "Should the programm be stoped if a closed encounter is detected")
+    ("calc-excentric-axis", po::value<bool>(&calc_excentric_axis)->default_value(true), "Should the excentric/great half axis of the particles be calculated")
+    ("calc-energy", po::value<bool>(&calc_energies)->default_value(true), "Should the energy of the particles be calculated")
     ;
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -76,14 +81,23 @@ int main(int argc, char **argv) {
     case INTEGRATION_METHOD_EULER:
       integration_function = integration_euler;
       break;
+    case INTEGRATION_METHOD_EULER_CROMER:
+      integration_function = integration_euler_cromer;
+      break;
     case INTEGRATION_METHOD_HEUN:
       integration_function = integration_heun;
+      break;
+    case INTEGRATION_METHOD_VERLET:
+      integration_function = integration_verlet;
       break;
     case INTEGRATION_METHOD_RK4:
       integration_function = integration_rk4;
       break;
-    case INTEGRATION_METHOD_VERLET:
-      integration_function = integration_verlet;
+    case INTEGRATION_METHOD_HERMIT:
+      integration_function = integration_hermit;
+      break;
+    case INTEGRATION_METHOD_HERMIT_ITER:
+      integration_function = integration_hermit_iter;
       break;
 //     case INTEGRATION_ANALYTIC:
 //       integration_method = integration_analytic;
@@ -93,18 +107,37 @@ int main(int argc, char **argv) {
 //       break;
   }
 
-  ofstream file_pos;
-  string file_pos_name = output_filename_prefix + ".dat";
+  ofstream pos_file;
+  string pos_file_name = output_filename_prefix + ".dat";
   if (write_to_files) {
-    file_pos.open(file_pos_name.c_str());
+    pos_file.open(pos_file_name.c_str());
+  }
+  ofstream conserved_file;
+  string conserved_file_name = output_filename_prefix + "-conserved.dat";
+  if (write_to_files) {
+    conserved_file.open(conserved_file_name.c_str());
   }
 
   // Load the initial parameters
   nbody_load_from_file(input_filename, y, dydx, m, eta, t_max);
   dt = eta;
+  int count_bodies = m.size();
 
   // Setup the initial values
   nbody_init_problem(y, m);
+
+  // Calculate the initial conserved quantities.
+  listdouble list_total_mass(0), list_start_energy(0), list_start_great_axis(0), list_start_excentric(0);
+  double start_total_momentum, start_total_angular_momentum;
+  for (int i = 0; i < count_bodies; i++) {
+    if (calc_excentric_axis) {
+//       listdouble r_rel(3);
+//       listdouble v_rel(3);
+    }
+    if (calc_energies) {
+      list_start_energy.push_back(calc_energy(y, m, i));
+    }
+  }
 
   // Store initial conserved quantities
 
@@ -117,17 +150,31 @@ int main(int argc, char **argv) {
     nbody_adapt_timestamp(dt, eta);
 
     if (write_to_files) {
-      nbody_write_pos(file_pos, y, dydx, m);
+      nbody_write_pos(pos_file, y, dydx, m);
     }
-    // @TODO write to files
     // @TODO Calculate the conserved quantities
+    double great_half_axis, excentric, energy, total_momentum, total_angular_momentum = 0.0;
+    listdouble r_cm(3);
+    total_momentum = calc_total_momentum(y, m);
+    total_angular_momentum = calc_total_angular_momentum(y, m);
+    r_cm = calc_r_center_mass(y, m);
+    for (int i = 0; i < count_bodies; i++) {
+      if (calc_energies) {
+        energy = calc_energy(y, m, i) - list_start_energy[i];
+      }
+      if (calc_excentric_axis) {
+        // @TODO
+      }
+      nbody_write_conservered(conserved_file, t, abs(energy), total_momentum, total_angular_momentum, r_cm);
+    }
 
     t += dt;
   }
 
   // Stop the programm.
   if (write_to_files) {
-    file_pos.close();
+    pos_file.close();
+    conserved_file.close();
   }
 
   return 0;
@@ -222,15 +269,7 @@ void nbody_init_problem(listdouble& y, listdouble& m) {
   // \vec{r}_cm = \frac{1}{M} \cdot \sum_i^N m_i \cdot \vec{r}_i
   listdouble r_cm(3);
 
-  // Iterate over x,y,z
-  for (int i = 0; i < 3; i++) {
-    // then over each body.
-    for (int j = 0; j < size; j++) {
-      // And sum up the values of a certain component of each body.
-      r_cm[i] = r_cm[i] + m[j] * y[j * 3 + i];
-    }
-    r_cm[i] = r_cm[i] / total_mass;
-  }
+  r_cm = calc_r_center_mass(y, m);
 
   // Now we have the center of mass.
 
@@ -284,5 +323,20 @@ void nbody_write_pos(ofstream &pos_file, listdouble& y, listdouble& dydx, listdo
       pos_file << m[i];
       pos_file << endl;
     }
+  }
+}
+
+void nbody_write_conservered(ofstream &conserved_pos, const double t, const double energy, const double total_momentum, const double total_angular_momentum
+  , const listdouble& r_cm) {
+  if (conserved_pos.is_open()) {
+    conserved_pos
+     << t << " "
+     << energy << " "
+     << total_momentum << " "
+     << total_angular_momentum << " "
+     << r_cm[0] << " "
+     << r_cm[1] << " "
+     << r_cm[2] << " "
+     << endl;
   }
 }

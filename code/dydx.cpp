@@ -4,7 +4,6 @@
 
 void calc_accel_multiple(listdouble& a, const listdouble& y, const listdouble& m) {
   const int count_bodies = m.size();
-  const int size = count_bodies * 3;
 
   listdouble r_diff(3);
   double r_diff_norm = 0.0;

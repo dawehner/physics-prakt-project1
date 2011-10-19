@@ -32,8 +32,7 @@ int main(int argc, char **argv) {
   int steps_per_orbit = 100;
   bool break_closed_encounter = false;
   string input_filename = "";
-  bool calc_excentric_axis = true;
-  bool calc_energies = true;
+  bool calc_2body_values = false;
 
 
   // Stores variables for the time.
@@ -65,8 +64,7 @@ int main(int argc, char **argv) {
     ("steps-per-orbit,s", po::value<int>(&steps_per_orbit)->default_value(100), "The initial amount of steps per orbit")
     ("input,f", po::value<string>(&input_filename)->default_value(""), "Specify the file which has the initial parameters")
     ("break-closed-encounters,e", po::value<bool>(&break_closed_encounter)->default_value(false), "Should the programm be stoped if a closed encounter is detected")
-    ("calc-excentric-axis", po::value<bool>(&calc_excentric_axis)->default_value(true), "Should the excentric/great half axis of the particles be calculated")
-    ("calc-energy", po::value<bool>(&calc_energies)->default_value(true), "Should the energy of the particles be calculated")
+    ("calc-2body-values", po::value<bool>(&calc_2body_values)->default_value(true), "Should the two body values(specific impuls, great half axis, excentric) be calculated.")
     ;
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -117,27 +115,31 @@ int main(int argc, char **argv) {
   if (write_to_files) {
     conserved_file.open(conserved_file_name.c_str());
   }
+  ofstream conserved_2body_file;
+  string conserved_2body_file_name = output_filename_prefix + "-conserved-2body.dat";
+  if (write_to_files) {
+    conserved_2body_file.open(conserved_2body_file_name.c_str());
+  }
 
   // Load the initial parameters
   nbody_load_from_file(input_filename, y, dydx, m, eta, t_max);
   dt = eta;
-  int count_bodies = m.size();
+  const int count_bodies = m.size();
+  listdouble da(count_bodies * 3);
 
   // Setup the initial values
   nbody_init_problem(y, m);
 
   // Calculate the initial conserved quantities.
+  // Additional calculate things like the specific momentum, if needed.
   listdouble list_total_mass(0), list_start_energy(0), list_start_great_axis(0), list_start_excentric(0);
-  double start_total_momentum, start_total_angular_momentum;
-  for (int i = 0; i < count_bodies; i++) {
-    if (calc_excentric_axis) {
-//       listdouble r_rel(3);
-//       listdouble v_rel(3);
-    }
-    if (calc_energies) {
-      list_start_energy.push_back(calc_energy(y, m, i));
-    }
+  double start_total_energy, start_total_momentum, start_total_angular_momentum = 0.0;
+  if (calc_2body_values) {
+    calc_2body_values_inital(y, m, list_total_mass, list_start_energy, list_start_great_axis, list_start_excentric);
   }
+  start_total_energy = calc_total_energy(y, m);
+  start_total_momentum = calc_total_momentum(y, m);
+  start_total_angular_momentum = calc_total_angular_momentum(y, m);
 
   // Store initial conserved quantities
 
@@ -147,26 +149,26 @@ int main(int argc, char **argv) {
     calc_dydx(dydx, y, m);
     integration_function(y, dydx, m, dt);
     // @TODO Adapt the timestamp and update the current time.
-    nbody_adapt_timestamp(dt, eta);
+    calc_accel_change_multiple(da, y, m);
+
+    if (adapt_timestamp) {
+      nbody_adapt_timestamp(dt, eta, dydx, da);
+    }
 
     if (write_to_files) {
       nbody_write_pos(pos_file, y, dydx, m);
     }
-    // @TODO Calculate the conserved quantities
-    double great_half_axis, excentric, energy, total_momentum, total_angular_momentum = 0.0;
+    if (calc_2body_values) {
+      nbody_2body_values_write(conserved_2body_file, t, y, m, list_start_energy, list_start_energy, list_start_great_axis, list_start_excentric);
+    }
+
+    double total_energy, total_momentum, total_angular_momentum = 0.0;
     listdouble r_cm(3);
     total_momentum = calc_total_momentum(y, m);
     total_angular_momentum = calc_total_angular_momentum(y, m);
     r_cm = calc_r_center_mass(y, m);
-    for (int i = 0; i < count_bodies; i++) {
-      if (calc_energies) {
-        energy = calc_energy(y, m, i) - list_start_energy[i];
-      }
-      if (calc_excentric_axis) {
-        // @TODO
-      }
-      nbody_write_conservered(conserved_file, t, abs(energy), total_momentum, total_angular_momentum, r_cm);
-    }
+    total_energy = calc_total_energy(y, m);
+    nbody_write_conservered(conserved_file, t, abs(total_energy), total_momentum, total_angular_momentum, r_cm);
 
     t += dt;
   }
@@ -304,8 +306,27 @@ void nbody_init_problem(listdouble& y, listdouble& m) {
   }
 }
 
-void nbody_adapt_timestamp(double& dt, const double& eta) {
-//   calc_accel_change_multiple();
+void nbody_adapt_timestamp(double& dt, const double& eta, const listdouble& dydx, const listdouble& da) {
+  double min = numeric_limits<double>::max();
+  double min_help = 0.0;
+  const int size_2 = dydx.size() / 2;
+  const int count_bodies = dydx.size() / 6;
+
+  listdouble a3(3);
+  listdouble da3(3);
+  double a3_norm = 0.0;
+  double da3_norm = 0.0;
+  for (int i = 0; i < count_bodies; i++) {
+    for (int k = 0; k < 3; k++) {
+      a3[k] = dydx[size_2 + i*3 + k];
+      da3[k] = da3[i*3 + k];
+    }
+    da3_norm = v3_norm(da3);
+    a3_norm = v3_norm(a3);
+    min_help = a3_norm / da3_norm;
+    min = min_help < min ? min_help : min;
+  }
+  dt = eta * min;
 }
 
 void nbody_write_pos(ofstream &pos_file, listdouble& y, listdouble& dydx, listdouble& m) {
@@ -338,5 +359,29 @@ void nbody_write_conservered(ofstream &conserved_pos, const double t, const doub
      << r_cm[1] << " "
      << r_cm[2] << " "
      << endl;
+  }
+}
+
+
+void nbody_2body_values_write(ofstream &conserved_2body_file, const double t, const listdouble& y, const listdouble& m, const listdouble& list_total_mass, const listdouble& list_start_energy, const listdouble& list_start_great_axis, const listdouble& list_start_excentric) {
+  const int count_bodies = m.size();
+  for (int i = 1; i < count_bodies; i++) {
+    listdouble r_rel(3);
+    listdouble v_rel(3);
+    listdouble j_spec(3);
+    listdouble e_runge(3);
+    listdouble v_cross_j(3);
+    double excentric = 0.0;
+    double great_half_axis = 0.0;
+    double energy = 0.0;
+    _calc_2body_values(y, m, i, j_spec, e_runge, excentric, great_half_axis, energy);
+    if (conserved_2body_file.is_open()) {
+      conserved_2body_file << t << " "
+      << energy << " "
+      << v3_norm(j_spec) << " "
+      << excentric << " "
+      << great_half_axis << " "
+      << endl;
+    }
   }
 }

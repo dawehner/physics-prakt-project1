@@ -1,0 +1,53 @@
+%
+% mathheader
+%
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[sumlimits,intlimits,namelimits]{amsmath}
+\usepackage{amssymb,amscd}
+\usepackage{dsfont}
+\usepackage{mathpazo}
+\usepackage[scaled = 0.95]{helvet}
+\usepackage{courier}
+\usepackage{amsmath}
+
+\newcommand{\bra}[1]{\left\langle #1 \right|}
+\newcommand{\ket}[1]{\left| #1\right\rangle}
+\newcommand{\skal}[2]{\left\langle #1 | #2 \right\rangle}
+\newcommand{\mskal}[2]{\left\langle #1 , #2 \right\rangle}
+\newcommand{\dx}{\:\text{\normalfont{d}}}
+\newcommand{\e}[1]{\text{\normalfont{e}}^{#1}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\N}{\mathds N}
+\newcommand{\Z}{\mathds Z}
+\newcommand{\R}{\mathds R}
+\newcommand{\Q}{\mathds Q}
+\newcommand{\C}{\mathds C}
+\newcommand{\K}{\mathds K}
+\newcommand{\V}{\mathds V}
+\newcommand{\I}{\Im}
+\newcommand{\Loes}[1]{\mathds L &:=\left\{ #1 \right\}}
+\newcommand{\prt}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\diff}[2]{\frac{\text{d} #1}{\text{d} #2}}
+\newcommand{\Diff}[1]{\frac{\text{d}}{\text{d} #1}}
+\newcommand{\svec}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\newcommand{\detm}[1]{\begin{vmatrix} #1 \end{vmatrix}}
+\newcommand{\BegLGS}[1]{\left\{\begin{array}{#1}}
+\newcommand{\EndLGS}{\end{array}\right.}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+%----------Textkommandos-----------------
+\newcommand{\DEF}[1]{\subsection[Definition: #1]{Definition (#1):}}
+\newcommand{\KOR}[1]{\subsection[Korollar: #1]{Korollar (#1):}}
+\newcommand{\LEMMA}[1]{\subsection[Lemma: #1]{Lemma (#1):}}
+\newcommand{\BEM}{\paragraph{Bemerkung:}}
+\newcommand{\BSP}{\paragraph{\textcolor{HeadColor}{Beispiel.}}}
+\newcommand{\SATZ}[1]{\subsection[Satz: #1]{\textsc{Satz (#1):}}}
+%----------Alphabetische Sortierung------
+\newcounter{ale}
+\newcommand{\abc}{\item[\alph{ale})]\stepcounter{ale}}
+\newenvironment{liste}{\begin{itemize}}{\end{itemize}}
+\newcommand{\aliste}{\begin{liste} \setcounter{ale}{1}}
+\newcommand{\zliste}{\end{liste}}
+\newenvironment{abcliste}{\aliste}{\zliste}
+%----------------------------------------

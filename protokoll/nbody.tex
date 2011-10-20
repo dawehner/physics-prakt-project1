@@ -1,0 +1,43 @@
+\documentclass[%
+	pdftex,%              PDFTex verwenden da wir ausschlieﬂlich ein PDF erzeugen.
+	a4paper,%             Wir verwenden A4 Papier.
+	12pt,%                Grosse Schrift, besser geeignet f√ºr A4.
+	headsepline,%         Linie nach Kopfzeile.
+	footsepline,%         Linie vor Fusszeile.
+]{scrreprt}
+\input{classheader}
+\input{mathheader}
+\usepackage{hyperref}
+\author{blub}
+
+\title {
+  \textcolor{HeadColor}{
+  \textsc{Protokoll des Compopraktikums}\\
+  \emph{N-Body}
+  }
+}
+
+\author{
+  \emph{Versuch vom:} 21. Oktober 2011\\
+  \textsc{Martin Schmidt}\\
+  \textsc{Daniel Wehner}\\
+%   \emph{Gruppe:} 1\\
+  \emph{Betreuer:} Dr. Speith\\
+%   (\emph{Textsatz mit }$\LaTeX\;2\eps$)
+}
+% Code
+\usepackage{listings}
+\usepackage{color}
+% Extra stuff
+\usepackage{subfig}
+\usepackage{hyperref}
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\chapter{Einleitung}
+\include{einleitung}
+\chapter{Auswertung}
+\include{auswertung}
+\end{document}

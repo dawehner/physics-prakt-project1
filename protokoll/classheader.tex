@@ -1,0 +1,203 @@
+%
+% A. DOKUMENTKLASSE
+% ---------------------------------------------------------------------------
+%
+
+%
+%  2. Festlegen der Zeichencodierung des Dokuments und des Zeichensatzes.
+%     Wir verwenden 'Latin1' (ISO-8859-1) für das Dokument,
+%     und die 'T1' codierung für die Schrift.
+%
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%
+%  3. Packet für die Index-Erstellung laden.
+%
+%\usepackage{makeidx}
+
+%
+%  4. Paket für die Lokalisierung ins Deutsche laden.
+%     Wir verwenden neue deutsche Rechtschreibung mit 'ngerman'.
+%
+\usepackage[ngerman]{babel}
+
+
+%
+%  5. Paket für Anführungszeichen laden.
+%     Wir setzen den Stil auf 'swiss', und verwenden so die Schweizer Anführungszeichen.
+%
+%\usepackage[style=swiss]{csquotes}
+
+
+%
+% 10. Paket für Farben an verschieden Stellen. 
+%     Wir definieren zusätzliche benannte Farben.
+%
+\usepackage{color}
+\usepackage{framed}
+
+
+%
+% 11. Paket für spezielle PDF features.
+%
+\usepackage[%																								 Das Hyperref-Paket verwenden.
+	pdftitle={Chaos},%			 Titel des PDF Dokuments.
+	pdfauthor={Martin Schmidt, Daniel Wehner},%				     Autor des PDF Dokuments.
+	pdfsubject={Protokoll zum Nbody},% 						 Thema des PDF Dokuments.
+	pdfcreator={MiKTeX, LaTeX with hyperref and KOMA-Script},% Erzeuger des PDF Dokuments.
+	pdfkeywords={Praktikum,Nbody,Compo-Praktikumg},
+	bookmarksopenlevel=section,%															 Lesezeichen bis zu Sections öffnen.
+	pdfpagemode=UseOutlines,%                                  Inhaltsverzeichnis anzeigen beim Öffnen
+	pdfdisplaydoctitle=true,%                                  Dokumenttitel statt Dateiname anzeigen.
+	pdflang=de,%                                               Sprache des Dokuments.
+	pdfstartview={FitH}%																			 Größe an Fensterbreite anpassen
+]{hyperref}
+
+%
+% 12. Paket um Quellcode sauber zu formatieren.
+%     Mit der option 'savemem' verschieben wir das laden von 
+%     einzelnen Programmiersprachen auf einen späteren Zeitpunkt.
+%
+%\usepackage[savemem]{listings}
+
+%
+% 13a. Privates Paket für die Schriftart 'Goudy Sans' laden.
+%      Dieses Paket ist nur für die publizierte Version des Dokuments gedacht
+%      und an dieser Stelle mit den nachfolgenden Anweisungen auskommentiert.
+%
+%\usepackage{goudysans}
+
+%
+% 13a. Font 'Latin Modern Family' verwenden.
+%      Verwende dieses Paket wenn du DML selbst kompilierst.
+%
+%\usepackage{lmodern}
+
+%
+% 14. Typewriter Font LuxiMono laden.
+%
+
+
+
+% 
+% B. EINSTELLUNGEN
+% ---------------------------------------------------------------------------
+%
+
+%
+%  1. Definieren von eigenen benannten Farben.
+%     Für spätere Verwendung in dem Dokument, definieren wir einzelne
+%     benannte Farben.
+%
+\definecolor{LinkColor}{rgb}{0,0,0.5}
+\definecolor{HeadColor}{rgb}{0,0,0.6}
+\definecolor{shadecolor}{rgb}{0.85,0.95,1}
+%\definecolor{ListingBackground}{rgb}{0.85,0.85,0.85}
+
+%
+%  2. KOMA-Script Option, Zeilenumbruch bei Bildbeschreibungen.
+%
+\setcapindent{1em}
+
+%
+%  3. Stil der Kopf- und Fusszeilen.
+%     Wir aktivieren mit 'headings' laufende Seitentitel.
+%
+\pagestyle{headings}
+
+
+%
+%  4. Stil der Überschriften auf normale Schrift.
+%     Wir verwenden für die Überschriften den selben Font wie für den Text.
+%
+\setkomafont{chapter}{\huge\scshape\color{HeadColor}}       % Titel mit Normalschrift
+\setkomafont{section}{\Large\color{HeadColor}}
+\setkomafont{captionlabel}{\sffamily\bfseries\color{HeadColor}}     % Fette Beschriftungen 
+\setkomafont{caption}{\sffamily}
+\setkomafont{pagehead}{\sffamily\bfseries\color{HeadColor}}          % Kursive Seitentitel
+\setkomafont{descriptionlabel}{\sffamily\bfseries} % Fette Beschreibungstitel
+\setkomafont{pagenumber}{\sffamily\bfseries}
+\setkomafont{part}{\Huge\scshape\color{HeadColor}}
+
+%
+%  5. Farbeinstellungen für die Links im PDF Dokument.
+%
+\hypersetup{%
+	colorlinks=true,%        Aktivieren von farbigen Links im Dokument (keine Rahmen)
+	linkcolor=LinkColor,%    Farbe festlegen.
+	citecolor=LinkColor,%    Farbe festlegen.
+	filecolor=linkColor,%    Farbe festlegen.
+	menucolor=LinkColor,%    Farbe festlegen.
+	urlcolor=LinkColor,%     Farbe von URL's im Dokument.
+	bookmarksnumbered=true%  Überschriftsnummerierung im PDF Inhalt anzeigen.
+}
+
+%
+% D. AKTIONEN
+% ---------------------------------------------------------------------------
+%
+
+%
+%  1. Index erzeugen.
+%
+\makeindex
+%
+%
+% E. SILBENTRENNUNG
+% ---------------------------------------------------------------------------
+%
+
+\hyphenation{De-zi-mal-trenn-zeichen In-stal-la-ti-ons-as-sis-tent}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Adding lines above and below the chapter head
+%
+ 
+% 1st get a new command
+\newcommand*{\ORIGchapterheadstartvskip}{}%
+% 2nd save the original definition to the new command
+\let\ORIGchapterheadstartvskip=\chapterheadstartvskip
+% 3rd redefine the command using the saved original command
+\renewcommand*{\chapterheadstartvskip}{%
+  \ORIGchapterheadstartvskip
+  {%
+    \setlength{\parskip}{0pt}%
+    \noindent\rule[.3\baselineskip]{\linewidth}{1pt}\par
+  }%
+}
+ 
+% see above
+\newcommand*{\ORIGchapterheadendvskip}{}%
+\let\ORIGchapterheadendvskip=\chapterheadendvskip
+\renewcommand*{\chapterheadendvskip}{%
+  {%
+    \setlength{\parskip}{0pt}%
+    \noindent\rule[.3\baselineskip]{\linewidth}{1pt}\par
+  }%
+  \ORIGchapterheadendvskip
+}
+%
+%  End of chapter head change
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%
+% ===========================================================================
+% EOF
+%

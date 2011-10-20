@@ -11,7 +11,6 @@ double calc_energy(const listdouble& y, const listdouble& m, const int j) {
   const int size = count_bodies * 3;
   listdouble v3 = v3_slice(y, size + j * 3);
   const listdouble r3 = v3_slice(y, j*3);
-  
 
   energy_kinetic += 0.5 * m[j] * pow(v3_norm(v3), 2.0);
 
@@ -102,9 +101,10 @@ double calc_total_mass(const listdouble& m) {
   return total_mass;
 }
 
-void _calc_2body_values(const listdouble& y, const listdouble& m, const int i, listdouble& j_spec, listdouble& e_runge, double& excentric, double& great_half_axis, double& energy) {
+void _calc_2body_values(const listdouble& y, const listdouble& m, const int i,
+  listdouble& j_spec, listdouble& e_runge, double& excentric, double& great_half_axis, double& energy) {
   const int size_2 = y.size()/2;
-  const double total_mass = calc_total_mass(m);
+  const double total_mass = m[0] + m[i];
   listdouble r_rel(3);
   listdouble v_rel(3);
   listdouble v_cross_j(3);
@@ -117,10 +117,10 @@ void _calc_2body_values(const listdouble& y, const listdouble& m, const int i, l
   v_cross_j = v3_cross(v_rel, j_spec);
   r_rel_norm = v3_norm(r_rel);
   for (int k = 0; k < 3; k++) {
-    e_runge[k] = (v_cross_j[k] / total_mass) + r_rel[k] / r_rel_norm;
+    e_runge[k] = (v_cross_j[k] / total_mass) - r_rel[k] / r_rel_norm;
   }
   excentric = v3_norm(e_runge);
-  great_half_axis = (pow(v3_norm(j_spec), 2.0) / total_mass) / (1 - pow(excentric, 2.0));
+  great_half_axis = (pow(v3_norm(j_spec), 2.0) / total_mass) / (1.0 - pow(excentric, 2.0));
   energy = calc_energy(y, m, i);
 }
 

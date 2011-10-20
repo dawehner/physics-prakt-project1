@@ -28,8 +28,6 @@ int main(int argc, char **argv) {
   int integration_method = INTEGRATION_METHOD_EULER;
   string output_filename_prefix = "prefix";
   bool write_to_files = true;
-  int P_count = 10;
-  int steps_per_orbit = 100;
   bool break_closed_encounter = false;
   string input_filename = "";
   bool calc_2body_values = false;
@@ -48,7 +46,7 @@ int main(int argc, char **argv) {
   listdouble m;
 
   // Stores a pointer to the current used integration method
-  void (*integration_function) (listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) = integration_euler;
+  void (*integration_function) (listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) = integration_euler;
 
   // Load the options to the function.
 // Describe the available programm options.
@@ -61,10 +59,10 @@ int main(int argc, char **argv) {
     ("write-to-files,w", po::value<bool>(&write_to_files)->default_value(true), "Write to files at all")
     // Currently unsupported as t_max is in the input file.
     //     ("period-counts,c", po::value<int>(&P_count)->default_value(10), "How many orbits should be calculated")
-    ("steps-per-orbit,s", po::value<int>(&steps_per_orbit)->default_value(100), "The initial amount of steps per orbit")
+    //     ("steps-per-orbit,s", po::value<int>(&steps_per_orbit)->default_value(100), "The initial amount of steps per orbit")
     ("input,f", po::value<string>(&input_filename)->default_value(""), "Specify the file which has the initial parameters")
     ("break-closed-encounters,e", po::value<bool>(&break_closed_encounter)->default_value(false), "Should the programm be stoped if a closed encounter is detected")
-    ("calc-2body-values", po::value<bool>(&calc_2body_values)->default_value(true), "Should the two body values(specific impuls, great half axis, excentric) be calculated.")
+    ("calc-2body-values", po::value<bool>(&calc_2body_values)->default_value(false), "Should the two body values(specific impuls, great half axis, excentric) be calculated.")
     ;
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -385,7 +383,7 @@ void nbody_2body_values_write(ofstream &conserved_2body_file, const double t, co
       << abs(energy - list_start_energy[i])<< " "
       << v3_norm(j_spec) << " "
       << abs(excentric - list_start_excentric[i]) << " "
-      << abs(great_half_axis - list_start_great_axis[i])<< " "
+      << great_half_axis << " "
       << endl;
     }
   }

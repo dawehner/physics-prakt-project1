@@ -3,7 +3,7 @@
 #include <cmath>
 #include "dydx.h"
 
-void integration_euler(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) {
+void integration_euler(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
   const int size = y.size();
   for (int i = 0; i < size; i++) {
     y[i] = y[i] + dt * dydx[i];
@@ -11,7 +11,7 @@ void integration_euler(listdouble& y, const listdouble& dydx, const listdouble& 
 }
 
 
-void integration_euler_cromer(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) {
+void integration_euler_cromer(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
   const int size = y.size();
   const int size_2 = size/2;
   listdouble dydx_copy = dydx;
@@ -28,7 +28,7 @@ void integration_euler_cromer(listdouble& y, const listdouble& dydx, const listd
 }
 
 
-void integration_heun(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) {
+void integration_heun(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
   const int size = y.size();
 
   listdouble y2(size);
@@ -47,7 +47,7 @@ void integration_heun(listdouble& y, const listdouble& dydx, const listdouble& m
 /**
  * @todo: this calcs the a two times.
  */
-void integration_verlet(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) {
+void integration_verlet(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
   const int size = y.size();
   const int size_2 = size/2;
 
@@ -70,9 +70,9 @@ void integration_verlet(listdouble& y, const listdouble& dydx, const listdouble&
   }
 }
 
-void integration_leapfrog(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) { }
+void integration_leapfrog(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) { }
 
-void integration_rk4(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) {
+void integration_rk4(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
   const int size = y.size();
   listdouble y1 = y;
   listdouble y2(size);
@@ -107,7 +107,7 @@ void integration_rk4(listdouble& y, const listdouble& dydx, const listdouble& m,
   }
 }
 
-void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) {
+void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
   const int size = y.size();
   const int size_2 = size/2;
   listdouble da(size_2);
@@ -155,7 +155,7 @@ void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble&
   }
 }
 
-void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdouble& m, const double& dt) {
+void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
   const int size = y.size();
   const int size_2 = size/2;
   listdouble da(size_2);

@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 
   // Calculate the initial conserved quantities.
   // Additional calculate things like the specific momentum, if needed.
-  listdouble list_total_mass(0), list_start_energy(0), list_start_great_axis(0), list_start_excentric(0);
+  listdouble list_total_mass(1), list_start_energy(1), list_start_great_axis(1), list_start_excentric(1);
   double start_total_energy, start_total_momentum, start_total_angular_momentum = 0.0;
   if (calc_2body_values) {
     calc_2body_values_inital(y, m, list_total_mass, list_start_energy, list_start_great_axis, list_start_excentric);
@@ -168,7 +168,9 @@ int main(int argc, char **argv) {
     total_angular_momentum = calc_total_angular_momentum(y, m);
     r_cm = calc_r_center_mass(y, m);
     total_energy = calc_total_energy(y, m);
-    nbody_write_conservered(conserved_file, t, abs(total_energy), total_momentum, total_angular_momentum, r_cm);
+    nbody_write_conservered(conserved_file, t, abs(total_energy), start_total_energy,
+                            total_momentum, start_total_momentum,
+                            total_angular_momentum, start_total_angular_momentum, r_cm);
 
     t += dt;
   }
@@ -347,14 +349,17 @@ void nbody_write_pos(ofstream &pos_file, listdouble& y, listdouble& dydx, listdo
   }
 }
 
-void nbody_write_conservered(ofstream &conserved_pos, const double t, const double energy, const double total_momentum, const double total_angular_momentum
-  , const listdouble& r_cm) {
+void nbody_write_conservered(ofstream &conserved_pos, const double t,
+  const double energy, const double start_energy,
+  const double total_momentum, const double start_total_momentum,
+  const double total_angular_momentum , const double start_total_angular_momentum,
+  const listdouble& r_cm) {
   if (conserved_pos.is_open()) {
     conserved_pos
      << t << " "
-     << energy << " "
-     << total_momentum << " "
-     << total_angular_momentum << " "
+     << abs(start_energy - energy) << " "
+     << abs(start_total_momentum - total_momentum) << " "
+     << abs(start_total_angular_momentum - total_angular_momentum) << " "
      << r_cm[0] << " "
      << r_cm[1] << " "
      << r_cm[2] << " "
@@ -377,10 +382,10 @@ void nbody_2body_values_write(ofstream &conserved_2body_file, const double t, co
     _calc_2body_values(y, m, i, j_spec, e_runge, excentric, great_half_axis, energy);
     if (conserved_2body_file.is_open()) {
       conserved_2body_file << t << " "
-      << energy << " "
+      << abs(energy - list_start_energy[i])<< " "
       << v3_norm(j_spec) << " "
-      << excentric << " "
-      << great_half_axis << " "
+      << abs(excentric - list_start_excentric[i]) << " "
+      << abs(great_half_axis - list_start_great_axis[i])<< " "
       << endl;
     }
   }

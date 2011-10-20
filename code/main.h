@@ -32,7 +32,7 @@ void nbody_write_pos(ofstream &file_pos, listdouble& y, listdouble& dydx, listdo
 /**
  * Add the current conserved quantities to the conserved file.
  */
-void nbody_write_conservered(ofstream& conserved_pos, const double t, const double energy, const double total_momentum, const double total_angular_momentum, const listdouble& r_cm);
+void nbody_write_conservered(ofstream& conserved_pos, const double t, const double energy, const double start_energy, const double total_momentum, const double start_total_momentum, const double total_angular_momentum, const double start_total_angular_momentum, const listdouble& r_cm);
 
 void nbody_2body_values_write(ofstream& conserved_2body_file, const double t, const listdouble& y, const listdouble& m, const listdouble& list_total_mass, const listdouble& list_start_energy, const listdouble& list_start_great_axis, const listdouble& list_start_excentric);
 

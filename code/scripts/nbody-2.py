@@ -13,10 +13,10 @@ for eta in eta_list:
 
   for method, name in used_integrators.iteritems():
     print "run eta: {0} method: {1}".format(eta, name)
-    nbody_run_collect({"--input": data_filename, "--integration-method": method},
+    nbody_run_collect({"--input": data_filename, "--integration-method": method, "--calc-2body-values" : 1},
     "output/2/nbody-2-eta-{0}-method-{1}".format(eta, method))
 
-
+print "Start plotting"
 # Generate one plot for the energy/e, a forech integration_method but with different eta.
 for method, name in used_integrators.iteritems():
 

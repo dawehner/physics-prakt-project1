@@ -160,7 +160,7 @@ void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdo
   const int size = y.size();
   const int size_2 = size/2;
   listdouble da(size_2);
-  const int hermit_iteration_count = 5;
+  const int hermit_iteration_count = 1;
   listdouble y_p(size);
 
   // Copy y

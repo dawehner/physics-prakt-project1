@@ -206,7 +206,12 @@ void nbody_load_from_file(string& filename, listdouble& y, listdouble& dydx, lis
       for (tokenizer::iterator beg = tokens.begin(); beg != tokens.end(); ++beg) {
         switch (count++) {
           case 0:
-            count_bodies = lexical_cast<int>(*beg);
+            try {
+              count_bodies = lexical_cast<int>(*beg);
+            }
+            catch (const std::exception&) {
+              count_bodies = 0;
+            }
             // Resize to the amount of bodies we have.
             y.resize(count_bodies * 3 * 2);
             dydx.resize(count_bodies * 3 * 2);
@@ -214,10 +219,20 @@ void nbody_load_from_file(string& filename, listdouble& y, listdouble& dydx, lis
 
             break;
           case 1:
-            t_max = lexical_cast<double>(*beg);
+            try {
+              t_max = lexical_cast<double>(*beg);
+            }
+            catch (const std::exception&) {
+              t_max = 0.0;
+            }
             break;
           case 2:
-            eta = lexical_cast<double>(*beg);
+            try {
+              eta = lexical_cast<double>(*beg);
+            }
+            catch (const std::exception&) {
+              eta = 0.0;
+            }
             break;
         }
       }

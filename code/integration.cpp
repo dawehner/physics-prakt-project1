@@ -111,6 +111,7 @@ void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble&
   const int size = y.size();
   const int size_2 = size/2;
   listdouble da(size_2);
+  listdouble y_p(size);
 
   calc_accel_change_multiple(da, y, m);
 
@@ -119,11 +120,11 @@ void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble&
     // r
     if (i < size_2) {
       // r = r + v + a + a'.
-      y[i] = y[i] + dydx[i] * dt + (1.0/2.0) * dydx[size_2 + i] * pow(dt, 2.0) + (1.0/6.0) * da[i] * pow(dt, 3.0);
+      y_p[i] = y[i] + dydx[i] * dt + (1.0/2.0) * dydx[size_2 + i] * pow(dt, 2.0) + (1.0/6.0) * da[i] * pow(dt, 3.0);
     }
     // v
     else {
-      y[i] = y[i] + dydx[i] * dt + (1.0/2.0) * da[i - size_2] * pow(dt, 2.0);
+      y_p[i] = y[i] + dydx[i] * dt + (1.0/2.0) * da[i - size_2] * pow(dt, 2.0);
     }
   }
 
@@ -131,26 +132,26 @@ void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble&
   listdouble ap(size_2);
   listdouble dap(size_2);
 
-  calc_accel_multiple(ap, y, m);
-  calc_accel_change_multiple(dap, y, m);
+  calc_accel_multiple(ap, y_p, m);
+  calc_accel_change_multiple(dap, y_p, m);
 
   // Calculate dda, ddda.
   listdouble dda(size_2);
   listdouble ddda(size_2);
   for (int i = 0; i < size_2; i++) {
-    dda[i] = (- 3 * (dydx[size_2 + i] - ap[i]) / (dt*dt) - (2 * da[i] + dap[i]) / dt ) * 2;
-    ddda[i] = (2 * (dydx[size_2 + i] - ap[i]) / pow(dt, 3.0) + (da[i] + dap[i]) / (dt*dt) ) * 6;
+    dda[i] = (- 3.0 * (dydx[size_2 + i] - ap[i]) / (pow(dt, 2.0)) - (2.0 * da[i] + dap[i]) / dt ) * 2.0;
+    ddda[i] = (2.0 * ((dydx[size_2 + i] - ap[i]) / pow(dt, 3.0)) + (da[i] + dap[i]) / (pow(dt, 2.0)) ) * 6.0;
   }
 
   // Calculate the corrected values.
   for (int i = 0; i < size; i++) {
     // r_c
     if (i < size_2) {
-      y[i] = y[i] + (1.0/24.0) * dda[i] * pow(dt, 4.0) + (1.0/120.0) * ddda[i] * pow(dt, 5.0);
+      y[i] = y_p[i] + (1.0/24.0) * dda[i] * pow(dt, 4.0) + (1.0/120.0) * ddda[i] * pow(dt, 5.0);
     }
     // v_c
     else {
-      y[i] = y[i] + (1.0/6.0) * dda[i - size_2] * pow(dt, 3.0) + (1.0/24.0) * ddda[i - size_2] * pow(dt, 4.0);
+      y[i] = y_p[i] + (1.0/6.0) * dda[i - size_2] * pow(dt, 3.0) + (1.0/24.0) * ddda[i - size_2] * pow(dt, 4.0);
     }
   }
 }

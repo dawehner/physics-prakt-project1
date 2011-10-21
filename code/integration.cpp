@@ -159,10 +159,11 @@ void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdo
   const int size = y.size();
   const int size_2 = size/2;
   listdouble da(size_2);
-  const int hermit_iteration_count = 1;
+  const int hermit_iteration_count = 5;
+  listdouble y_p(size);
 
   // Copy y
-  listdouble y_c = y;
+  listdouble y_orig = y;
 
   calc_accel_change_multiple(da, y, m);
 
@@ -171,11 +172,11 @@ void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdo
     // r
     if (i < size_2) {
       // r = r + v + a + a'.
-      y[i] = y[i] + dydx[i] * dt + (1.0/2.0) * dydx[size_2 + i] * pow(dt, 2.0) + (1.0/6.0) * da[i] * pow(dt, 3.0);
+      y_p[i] = y[i] + dydx[i] * dt + (1.0/2.0) * dydx[size_2 + i] * pow(dt, 2.0) + (1.0/6.0) * da[i] * pow(dt, 3.0);
     }
     // v
     else {
-      y[i] = y[i] + dydx[i] * dt + (1.0/2.0) * da[i - size_2] * pow(dt, 2.0);
+      y_p[i] = y[i] + dydx[i] * dt + (1.0/2.0) * da[i - size_2] * pow(dt, 2.0);
     }
   }
 
@@ -189,12 +190,12 @@ void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdo
 
     // v
     for (int i = 0; i < size_2; i++) {
-      y[size_2 + i] = y[size_2 + i] + (1.0/2.0) * (ap[i] + dydx[size_2 + i]) * dt + (1.0/12.0) * (dap[i] - da[i]) * pow(dt, 2.0);
+      y[size_2 + i] = y_orig[size_2 + i] + (1.0/2.0) * (ap[i] + dydx[size_2 + i]) * dt + (1.0/12.0) * (dap[i] - da[i]) * pow(dt, 2.0);
     }
 
     // r
     for (int i = 0; i < size_2; i++) {
-      y[i] = y[i] + (1.0/2.0) * (y_c[size_2 + i] + y[size_2 + i]) * dt + (1.0/12.0) * (ap[i] - dydx[size_2 + i]) * pow(dt, 2.0);
+      y[i] = y_orig[i] + (1.0/2.0) * (y[size_2 + i] + y_orig[size_2 + i]) * dt + (1.0/12.0) * (ap[i] - dydx[size_2 + i]) * pow(dt, 2.0);
     }
   }
 }

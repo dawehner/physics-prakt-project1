@@ -156,11 +156,10 @@ void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble&
   }
 }
 
-void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
+void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt, const int iteration_count = 1) {
   const int size = y.size();
   const int size_2 = size/2;
   listdouble da(size_2);
-  const int hermit_iteration_count = 1;
   listdouble y_p(size);
 
   // Copy y
@@ -181,7 +180,7 @@ void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdo
     }
   }
 
-  for (int j = 0; j < hermit_iteration_count; j++) {
+  for (int j = 0; j < iteration_count; j++) {
     // Calculate the predicted a, da.
     listdouble ap(size_2);
     listdouble dap(size_2);
@@ -199,4 +198,14 @@ void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdo
       y[i] = y_orig[i] + (1.0/2.0) * (y[size_2 + i] + y_orig[size_2 + i]) * dt + (1.0/12.0) * (ap[i] - dydx[size_2 + i]) * pow(dt, 2.0);
     }
   }
+}
+
+void integration_hermit_iter_1(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
+  integration_hermit_iter(y, dydx, m, dt, 1);
+}
+void integration_hermit_iter_2(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
+  integration_hermit_iter(y, dydx, m, dt, 2);
+}
+void integration_hermit_iter_5(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt) {
+  integration_hermit_iter(y, dydx, m, dt, 5);
 }

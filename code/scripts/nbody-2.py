@@ -3,7 +3,7 @@ from nbody import *
 eta_list = [0.5, 0.1, 0.05, 0.001, 0.0005, 0.0001]
 data = orig_data = nbody_load_init_file("./in2.txt")
 used_integrators = {6: "Hermit_Iter."}
-#used_integrators = {0: "Euler", 1: "Heun", 2: "Verlet", 4: "RK4", 5: "Hermit", 6: "Hermit_Iter."}
+used_integrators = {0: "Euler", 1: "Heun", 2: "Verlet", 4: "RK4", 5: "Hermit", 8: "Hermit_Iter1", 9: "Hermit_Iter2", 10: "Hermit_Iter5"}
 
 # 1) First part: different eta's.
 for eta in eta_list:

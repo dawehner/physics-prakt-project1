@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   int integration_method = INTEGRATION_METHOD_EULER;
   string output_filename_prefix = "prefix";
   bool write_to_files = true;
-  bool break_closed_encounter = false;
+//   bool break_closed_encounter = false;
   string input_filename = "";
   bool calc_2body_values = false;
 
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     //     ("period-counts,c", po::value<int>(&P_count)->default_value(10), "How many orbits should be calculated")
     //     ("steps-per-orbit,s", po::value<int>(&steps_per_orbit)->default_value(100), "The initial amount of steps per orbit")
     ("input,f", po::value<string>(&input_filename)->default_value(""), "Specify the file which has the initial parameters")
-    ("break-closed-encounters,e", po::value<bool>(&break_closed_encounter)->default_value(false), "Should the programm be stoped if a closed encounter is detected")
+//     ("break-closed-encounters,e", po::value<bool>(&break_closed_encounter)->default_value(false), "Should the programm be stoped if a closed encounter is detected")
     ("calc-2body-values", po::value<bool>(&calc_2body_values)->default_value(false), "Should the two body values(specific impuls, great half axis, excentric) be calculated.")
     ;
   po::variables_map vm;
@@ -94,6 +94,15 @@ int main(int argc, char **argv) {
       break;
     case INTEGRATION_METHOD_HERMIT_ITER:
       integration_function = integration_hermit_iter;
+      break;
+    case INTEGRATION_METHOD_HERMIT_ITER_1:
+      integration_function = integration_hermit_iter_1;
+      break;
+    case INTEGRATION_METHOD_HERMIT_ITER_2:
+      integration_function = integration_hermit_iter_2;
+      break;
+    case INTEGRATION_METHOD_HERMIT_ITER_5:
+      integration_function = integration_hermit_iter_5;
       break;
 //     case INTEGRATION_ANALYTIC:
 //       integration_method = integration_analytic;

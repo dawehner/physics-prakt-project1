@@ -1,2 +1,186 @@
 \section{Das Zwei-Körper Problem [Aufgabe 2]}
+Die erste Aufgabe bestand darin ein Zwei Körper Problem zu simulieren.
+Dabei waren die Anfangsdaten in der Datei ``in2'' gegeben und lauten folgendermaßen:
+\newline\newline
+\begin{center}
+\begin{tabular}{c|ccc|ccc}
+  Masse & x & y & z & $v_x$ & $v_y$ & $v_z$ \\
+  \hline
+  1.0 & 1.0 & 0 & 0    & 0 & 0 & 0 \\
+  1.0 & 0 & 0 & 0    & 0 & -1.0 & 0 \\
+\end{tabular}
+\end{center}
+Das System befindet sich dabei im Koordinatensystems des ersten Körpers.\\
+Wie man im Bild Abbildung \ref{fig:2body:rk4:positions} sieht ergeben die Anfangsdaten
+eine Kreisbahn.\newline
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{./images/2/positions.png}
+  \label{fig:2body:rk4:positions}
+  \caption{Position der zwei Körper mit RK4 und $\eta = 0.001$}
+\end{figure}
+\newline
+\subsection{Qualität der Integratoren}
+Um die Qualität der Integratoren zu bestimmten betrachet man die Veränderungen
+der Erhaltsungsgrößen über die Zeit bei verschiedenen Schrittweiten $\eta$.
+Zur Verfügung steht die Energie $\log\left| E - E_{\text{start}} \right|$,
+die Exzentrizität $\log\left|\left|\vec e\right| - \left|\vec{e}_\text{start}\right| \right|$
+und die große Halbachse $\log \left| a - e_{\text{start}} \right|$.
+
+\subsubsection{Euler}
+Berechnet man mit der Verfahren Euler die Position der beiden Teilchen
+und einem $eta = 0.1$ so sieht man in Abbildung \ref{fig:2body:euler:axis}
+das die große Halbachsen mit der Zeit ansteigt. Das Verfahren
+erzeugt also keine stabilen Bahnen. Zwar verbessert sich dieser Fehler
+durch eine Verminderung der Schrittweite, jedoch ergibt sich auch hier
+langfristig keine stabile Bahnen, wenn man einen Extra Plot erstellt.
+Damit eignet sich Euler, wie zu erwarten, nicht für eine sinnvollen Simulation
+des N-Körper Problems.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/energy-Euler.png}
+  \end{center}
+  \caption{Relative Energieänderung berechnet mit Euler}
+  \label{fig:2body:euler:energy}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/axis-Euler.png}
+  \end{center}
+  \caption{Relative \"Anderung der großen Halbachse berechnet mit Euler}
+  \label{fig:2body:euler:axis}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/excentric-Euler.png}
+  \end{center}
+  \caption{Relative \"Anderung der Exzentrizität berechnet mit Euler}
+  \label{fig:2body:euler:excentric}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/momentum-Euler.png}
+  \end{center}
+  \caption{Relative \"Anderung des Spezifischen Drehimpuls berechnet mit Euler}
+  \label{fig:2body:euler:spec_angular_momentum}
+\end{figure}
+
+\subsubsection{Heun/Mittelungs-Methode}
+Eine Verbessung der Euler Verfahren ist die Mittelungsmethode.
+Betrachet man die Energie in Abbildung \ref{fig:2body:heun:energy}
+so sieht man, dass die Energie deutlich weniger zunimmt im Vergleich zu Euler.
+Dies bedeutet es sind geschlossene Bahnen möglich ab einem $\eta$ von 0.1.\newline
+Interresant zu beobachten ist, dass bei jeder Periode (2 Pi in den Einheiten des Plots)
+um die Startposition herum die Genauigkeit stark zunimmt.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/energy-Heun.png}
+  \end{center}
+  \caption{Relative Energieänderung berechnet mit Heun}
+  \label{fig:2body:heun:energy}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/axis-Heun.png}
+  \end{center}
+  \caption{Relative \"Anderung der großen Halbachse berechnet mit Heun}
+  \label{fig:2body:heun:axis}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/excentric-Heun.png}
+  \end{center}
+  \caption{Relative \"Anderung der Exzentrizität berechnet mit Heun}
+  \label{fig:2body:heun:excentric}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/momentum-Heun.png}
+  \end{center}
+  \caption{Relative \"Anderung des Spezifischen Drehimpuls berechnet mit Heun}
+  \label{fig:2body:heun:spec_angular_momentum}
+\end{figure}
+\subsubsection{Leapfrog/Verlet}
+Um zu zeigen, dass Leapfrog/Verlet die Erhaltsungsgrößen erhält
+werden mehrere Orbits (10) geplottet. Unter Abbildung \ref{fig:2body:verlet:energy}
+sieht man deutlich, dass Verlet, selbst bei sehr großen Zeitschritten
+die Energie erhält, auch über viele Perioden.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/energy-Verlet.png}
+  \end{center}
+  \caption{Relative Energieänderung berechnet mit Verlet}
+  \label{fig:2body:verlet:energy}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/axis-Verlet.png}
+  \end{center}
+  \caption{Relative \"Anderung der großen Halbachse berechnet mit Verlet}
+  \label{fig:2body:verlet:axis}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/excentric-Verlet.png}
+  \end{center}
+  \caption{Relative \"Anderung der Exzentrizität berechnet mit Verlet}
+  \label{fig:2body:verlet:excentric}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/momentum-Verlet.png}
+  \end{center}
+  \caption{Relative \"Anderung des Spezifischen Drehimpuls berechnet mit Verlet}
+  \label{fig:2body:verlet:spec_angular_momentum}
+\end{figure}
+\subsubsection{RK4}
+Das Verfahren Runge-Kutta 4ter Ordnung hat laut Theorie die beste Genauigkeit aller
+benutzen Verfahren. Dies sieht man sofort in der Abbildung \ref{fig:2body:rk4:energy}
+denn die Genauigkeit der Energie ist bis zur 16ten Potenz gegeben. Erneut verbessert
+sich der Wert um die Anfangsposition herum. Bei RK4 sieht man jedoch noch eine weitere
+interresante Tatsache: die endliche Genauigkeit der Fließkommazahlen im Rechner.
+Bei sehr kleinen Zeitschritten z.B. $\eta = 0.0005$ sieht man, dass es zu Rundungsfehlern kommt.
+Dabei kann man sehen, dass der Rechner doch die Zahlen diskret abspeichert und nicht kontinuierlich
+rechnet.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/energy-RK4.png}
+  \end{center}
+  \caption{Relative Energieänderung berechnet mit RK4}
+  \label{fig:2body:rk4:energy}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/axis-RK4.png}
+  \end{center}
+  \caption{Relative \"Anderung der großen Halbachse berechnet mit RK4}
+  \label{fig:2body:rk4:axis}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/excentric-RK4.png}
+  \end{center}
+  \caption{Relative \"Anderung der Exzentrizität berechnet mit RK4}
+  \label{fig:2body:rk4:excentric}
+\end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{./images/2/momentum-RK4.png}
+  \end{center}
+  \caption{Relative \"Anderung des Spezifischen Drehimpuls berechnet mit RK4}
+  \label{fig:2body:rk4:spec_angular_momentum}
+\end{figure}
+\subsubsection{Hermit-Schema}
+Betrachtet man das nicht iterierte Hermit Verfahren so fällt
+auf dass die Genauigkeit der Energie etwa dem von Verlet entspricht, die Energie
+jedoch nicht erhalten wird. Das Verlet-Verfahren ist dem einfachen Hermit-Schema vorzuziehen,
+denn es erhält nicht nur die Energie langfristig, sondern schafft es zudem
+ohne eine zusätzliche Berechnung der Ableitung der Beschleunigung.\newline\newline
+\paragraph{Iteriertes Hermit Verfahren}
+Benutzt man das iterierte Hermit Verfahren so fällt auf,
+dass bei nur einer Iteration die Genauigkeit deutlich schlechter ist, als mit dem normalen Hermit Verfahren.
+Nimmt man eine weitere Iteration hinzu, so merkt man schnell, dass das Verfahren schnell konvergiert.
+Dabei gibt es kaum einen Unterschied zwischen 2 und 5 Iterationsschritten.
+
+
 \section{Das N-Körper Problem [Aufgabe 3]}

@@ -12,3 +12,39 @@ wie es in diesem Versuch der Fall ist, bis zu dem kompletten Universum.
 Im folgendem Versuch wird das N-Body Problem mithilfe eines in C++
 geschrieben Programms gelöst und analysiert.
 \section{Theorie}
+\section{Programm}
+Um das Programm aufzurufen verwende man verschiedene Parameter.
+\lstset{language=Bash,
+  basicstyle=\small \ttfamily,
+  showspaces=false,
+  showtabs=false,
+  tab= ,
+  keywordstyle=\bfseries,
+  showstringspaces=false,
+  framexleftmargin=0mm,
+  frame=single,
+  texcl=true}
+\begin{lstlisting}
+-i Integrationsmethode
+  0 Euler
+  1 Heun
+  2 Verlet
+  3 Leapfrog
+  4 RK4
+  5 Hermit
+  8 Hermit 1 Iterationsschritt
+  9 Hermit 2 Iterationsschritt
+  10 Hermit 5 Iterationsschritt
+-t Adaptiver Zeitschritt [ja/nein]
+-o "Dateiname"
+  Wohin soll die Ausgabe geschrieben werden
+-f "Eingabe-Datei"
+\end{lstlisting}
+Mithilfe dieser Parameter wird die Eingabedatei gelesen, das System auf Gesamtmasse 1 normiert
+und in das Schwerpunktsystem transferiert. Danach startet die Integration.\\
+Dazu werden die erhaltenen Bahnpositionen und Geschwindigkeiten nach jedem Schritt in die Datei ``output.dat'' geschrieben
+und die Erhaltungsgrößen wie Gesamtenergie, Gesamtimpuls und Gesamtdrehimpuls in die Datei ``output-conserved.dat''.
+Speziell für das zwei Körper Problem werden zusätzlich noch in eine Datei ``output-conserved-2body.dat''
+die Exzentrizität, der spezifische Drehimpuls und die große Halbachse für jeden Körper geschrieben.
+Das Programm ist dafür ausgelegt diese 3 Werte auch für ein System mit einem schweren
+Körper in der Mitte und zwei Satelliten zu berechnen.\\

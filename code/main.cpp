@@ -92,9 +92,9 @@ int main(int argc, char **argv) {
     case INTEGRATION_METHOD_HERMIT:
       integration_function = integration_hermit;
       break;
-    case INTEGRATION_METHOD_HERMIT_ITER:
-      integration_function = integration_hermit_iter;
-      break;
+//     case INTEGRATION_METHOD_HERMIT_ITER:
+//       integration_function = integration_hermit_iter;
+//       break;
     case INTEGRATION_METHOD_HERMIT_ITER_1:
       integration_function = integration_hermit_iter_1;
       break;

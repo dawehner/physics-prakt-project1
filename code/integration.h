@@ -23,7 +23,7 @@ void integration_verlet(listdouble& y, const listdouble& dydx, const listdouble&
 void integration_leapfrog(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt);
 void integration_rk4(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt);
 void integration_hermit(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt);
-void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt, const iteration_count = 1);
+void integration_hermit_iter(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt, const int iteration_count);
 void integration_hermit_iter_1(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt);
 void integration_hermit_iter_2(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt);
 void integration_hermit_iter_5(listdouble& y, const listdouble& dydx, const listdouble& m, double& dt);

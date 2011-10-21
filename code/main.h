@@ -11,7 +11,7 @@ const int G = 1;
 /**
  * Shortcut to get a list of doubles.
  */
-typedef vector< double> listdouble;
+typedef vector< long double> listdouble;
 
 void nbody_load_from_file(string& filename, listdouble& y, listdouble& dydx, listdouble& m, double& eta, double& t_max);
 
